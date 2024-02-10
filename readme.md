@@ -39,13 +39,13 @@
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/<s1mpleog>/<youtube-backend>.git
+   git clone https://github.com/s1mpleog/youtube-backend.git
    ```
 
 2. Install dependencies:
 
    ```bash
-   cd <youtube-backend>
+   cd youtube-backend
    npm install  # Install both client and server dependencies
    ```
 
