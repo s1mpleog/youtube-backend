@@ -1,5 +1,3 @@
-Absolutely! Here's a comprehensive GitHub README template for your MERN stack YouTube clone. Tailor it to your specific project:
-
 **Project Title:** YouTube Clone
 
 **Brief Description:** A MERN stack web application emulating the core features of YouTube, including video uploading, viewing, commenting, and user interactions.
@@ -75,10 +73,8 @@ We welcome contributions! Please refer to our `CONTRIBUTING.md` file for guideli
 
 **License**
 
-This project is licensed under the MIT License: [https://choosealicense.com/licenses/mit/](https://choosealicense.com/licenses/mit/) (or your preferred license).
+This project is licensed under the MIT License: [https://choosealicense.com/licenses/mit/](https://choosealicense.com/licenses/mit/)
 
 **Disclaimer**
 
 This YouTube clone project is intended for educational and demo purposes.
-
-**Let me know if you'd like me to flesh out any sections with more details or if you have specific features you want to highlight!**
