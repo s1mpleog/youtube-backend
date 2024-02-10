@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "type": "module",
   "scripts": {
-    "start": "NODE_OPTIONS='--experimental-specifier-resolution=node' nodemon src/index.js "
+    "dev": "nodemon src/index.js"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +15,8 @@
     "prettier": "^3.2.5"
   },
   "dependencies": {
-    "dotenv": "^16.4.1"
+    "dotenv": "^16.4.1",
+    "express": "^4.18.2",
+    "mongoose": "^8.1.1"
   }
 }
