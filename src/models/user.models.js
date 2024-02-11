@@ -26,11 +26,12 @@ const userSchema = new mongoose.Schema(
       index: true,
     },
     avatarImage: {
-      type: String,
-      required: [true, "Avatar is required"],
+      url: { type: String, required: true },
+      publicId: String,
     },
     coverImage: {
-      type: String,
+      url: String,
+      publicId: String,
     },
     watchHistory: [
       {

@@ -2,7 +2,10 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import { User } from "../models/user.models.js";
-import { uploadOnCloudinary } from "../services/cloudinary.js";
+import {
+  deleteOldImageFromCloudinary,
+  uploadOnCloudinary,
+} from "../services/cloudinary.js";
 import jwt from "jsonwebtoken";
 import { generateAccessAndRefreshToken } from "../utils/generateAccessAndRefreshTokens.js";
 
@@ -59,8 +62,8 @@ const registerUser = asyncHandler(async (req, res) => {
   //   upload user to database
   const user = await User.create({
     fullName,
-    avatarImage: avatarImage?.url,
-    coverImage: coverImage?.url || "",
+    avatarImage: { url: avatarImage?.url, publicId: avatarImage?.public_id },
+    coverImage: { url: coverImage?.url || "", publicId: coverImage?.public_id },
     email,
     password,
     username: username.toLowerCase(),
@@ -318,6 +321,11 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Avatar file is missing");
   }
 
+  const oldAvatarImage = await User.findById(req.user?._id).select(
+    "avatarImage"
+  );
+  const oldAvatarImagePublicId = oldAvatarImage?.avatarImage?.publicId;
+
   const avatar = await uploadOnCloudinary(avatarLocalPath);
 
   if (!avatar.url) {
@@ -328,14 +336,16 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
     req.user?._id,
     {
       $set: {
-        avatarImage: avatar.url,
+        avatarImage: { url: avatar?.url, publicId: avatar?.public_id },
       },
     },
     { new: true }
   ).select("-password");
 
+  await deleteOldImageFromCloudinary(oldAvatarImagePublicId);
+
   return res
-    .json(200)
+    .status(200)
     .json(new ApiResponse(200, user, "Avatar Image updated successfully"));
 });
 
@@ -346,17 +356,22 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Cover image is missing");
   }
 
+  const oldCoverImage = await User.findById(req.user?._id).select("coverImage");
+  const oldCoverImagePublicId = oldCoverImage.coverImage?.publicId;
+
   const coverImage = await uploadOnCloudinary(coverImageLocalPath);
 
   if (!coverImage.url) {
     throw new ApiError(400, "Error while updating cover image");
   }
 
+  await deleteOldImageFromCloudinary(oldCoverImagePublicId);
+
   const user = await User.findByIdAndUpdate(
     req.user?._id,
     {
       $set: {
-        coverImage: coverImage.url,
+        coverImage: { url: coverImage?.url, publicId: coverImage?.public_id },
       },
     },
     { new: true }
