@@ -27,28 +27,29 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(409, "Username or email already exists");
   }
 
-  const avatarImageLocalPath = req.files?.avatar[0]?.path;
-  const coverImageLocalPath = req.files?.cover[0]?.path;
+  const avatarLocalPath = req.files?.avatarImage[0]?.path;
+  const coverImageLocalPath = req.files?.coverImage[0]?.path;
 
-  if (!avatarImageLocalPath) {
-    throw new ApiError(400, "Avatar image is required");
+  if (!avatarLocalPath) {
+    throw new ApiError(400, "Avatar image is compulsory");
   }
 
   //   upload images to cloudinary
-  const avatarImage = await uploadOnCloudinary(avatarImageLocalPath);
+  const avatarImage = await uploadOnCloudinary(avatarLocalPath);
   const coverImage = await uploadOnCloudinary(coverImageLocalPath);
 
   if (!avatarImage) {
     throw new ApiError(400, "Avatar image is required");
   }
 
-  //   upload user to db
+  //   upload user to database
   const user = await User.create({
-    username: username.loLowerCase(),
+    fullName,
+    avatarImage: avatarImage?.url,
+    coverImage: coverImage?.url || "",
     email,
     password,
-    avatar: avatarImage.url,
-    coverImage: coverImage?.url || "",
+    username: username.toLowerCase(),
   });
 
   //   check if user created or not and remove password and refresh token
@@ -59,8 +60,6 @@ const registerUser = asyncHandler(async (req, res) => {
   if (!createdUser) {
     throw new ApiError(500, "Something went wrong while registering a user");
   }
-  console.log(req.files);
-  console.log(createdUser);
 
   //   return created user
   return res
