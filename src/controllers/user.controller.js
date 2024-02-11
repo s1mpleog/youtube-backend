@@ -87,13 +87,13 @@ const loginUser = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
 
   // then we are validating id the info is correct or not
-  if (!username || !email) {
+  if (!username && !email) {
     throw new ApiError(400, "Username or email is required");
   }
 
   // then we are checking in our db if user is present or not
   const user = await User.findOne({
-    $or: [username, email],
+    $or: [{ username }, { email }],
   });
 
   // then if user is not present throw error
